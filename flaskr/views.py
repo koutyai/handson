@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for, render_template, flash, abort, \
-        jsonify
+        jsonify, session
 from flaskr import app, db
 from flaskr.models import Entry
 
@@ -65,4 +65,23 @@ def user_delete(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'status': 'OK'})
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user, authenticated = User.authenticate(db.session.query,
+                request.form['email'], request.form['password'])
+        if authenticated:
+            session['user_id'] = user.id
+            flash('You were logged in')
+            return redirect(url_for('show_entries'))
+        else:
+            flash('Invalid email or password')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('You were logged out')
+    return redirect(url_for('show_entries'))
 
