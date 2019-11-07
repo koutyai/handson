@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for, render_template, flash, abort, \
         jsonify, session
 from flaskr import app, db
-from flaskr.models import Entry
+from flaskr.models import Entry, User
 
 @app.route('/')
 def show_entries():
